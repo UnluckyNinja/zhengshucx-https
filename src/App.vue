@@ -3,7 +3,9 @@
     <div>
       <div v-if="isHttps">
         <video id="video" :width="vWidth" :height="vHeight" style="border: 1px solid gray"></video>
-        <button @click="enableScan">扫码</button>
+        <div>
+          <button @click="enableScan">扫码</button>
+        </div>
       </div>
       <div v-else>
         <input type="text" v-model="httpsHost" width="100" @change="saveHost('https')" />
@@ -12,12 +14,15 @@
     </div>
     <div>
       <textarea name="result" cols="50" rows="3" v-model="scanResult"></textarea>
-      <a
-        :href="httpJumpLink"
-        v-if="httpJumpLink && isHttps"
-        target="_blank"
-        rel="noopener noreferrer"
-      >跳转查询</a>
+      <div>
+        <input type="text" v-model="httpHost" width="100" @change="saveHost('http')" />
+        <a
+          :href="httpJumpLink"
+          v-if="httpJumpLink && isHttps"
+          target="_blank"
+          rel="noopener noreferrer"
+        >跳转查询</a>
+      </div>
     </div>
     <div v-if="!isHttps">
       <div>Fetch header</div>
@@ -161,15 +166,15 @@ export default {
     saveHost(option) {
       if (option == 'https') {
         window.localStorage.setItem('httpsHost', this.httpsHost)
+        this.httpsJumpLink = 'https://' + this.httpsHost
       } else {
         window.localStorage.setItem('httpHost', this.httpHost)
+        this.httpJumpLink =
+          'http://' +
+          this.httpHost +
+          '/?code=' +
+          encodeURIComponent(this.scanResult)
       }
-      this.httpsJumpLink = 'https://' + this.httpsHost
-      this.httpJumpLink =
-        'http://' +
-        this.httpHost +
-        '/?code=' +
-        encodeURIComponent(this.scanResult)
     },
   },
 }
